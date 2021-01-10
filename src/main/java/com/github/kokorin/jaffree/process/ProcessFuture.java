@@ -1,5 +1,5 @@
 /*
- *    Copyright  2019 Denis Kokorin
+ *    Copyright  2020 Alex Katlein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
  *
  */
 
-package com.github.kokorin.jaffree.ffprobe.data;
+package com.github.kokorin.jaffree.process;
 
-import java.io.InputStream;
+import java.util.concurrent.Future;
 
-public interface FormatParser {
-    String getFormatName();
-
-    Data parse(InputStream inputStream);
+public interface ProcessFuture<V> extends Future<V> {
+    ProcessAccess getProcessAccess();
 }

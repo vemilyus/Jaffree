@@ -1,5 +1,5 @@
 /*
- *    Copyright  2020 Denis Kokorin
+ *    Copyright  2020 Denis Kokorin, Alex Katlein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,14 +15,12 @@
  *
  */
 
-package com.github.kokorin.jaffree.process;
+package com.github.kokorin.jaffree.ffprobe.data;
 
-public interface Stopper {
-    void graceStop();
-    void forceStop();
-    void setProcess(Process process);
-
-    interface Factory {
-        Stopper createStopper(Process process);
-    }
+public interface StreamingFormatParser {
+    String getFormatName();
+    
+    void pushLine(String line);
+    
+    Data getResult();
 }
