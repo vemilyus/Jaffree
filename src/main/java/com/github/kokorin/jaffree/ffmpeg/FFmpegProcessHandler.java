@@ -24,9 +24,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * {@link FFmpegResultReader} reads ffmpeg stderr output, parses {@link FFmpegProgress} and
+ * {@link FFmpegResult} and passes unparsed output to {@link OutputListener} (if provided).
+ */
 public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FFmpegProcessHandler.class);
+    
+    private static final double PERCENTS_TO_RATIO_MULTIPLIER = 0.01;
+    private static final Logger LOGGER = LoggerFactory.getLogger(FFmpegResultReader.class);
     
     private final ProgressListener progressListener;
     private final OutputListener outputListener;
@@ -34,6 +42,12 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
     private volatile FFmpegResult finalResult;
     private volatile String finalErrorMessage;
     
+    /**
+     * Creates {@link FFmpegResultReader}.
+     *
+     * @param progressListener progress listener
+     * @param outputListener   output listener
+     */
     public FFmpegProcessHandler(ProgressListener progressListener, OutputListener outputListener) {
         this.progressListener = progressListener;
         this.outputListener = outputListener;
@@ -96,16 +110,16 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
             setException(new RuntimeException("FFmpeg failed without result"));
         }
     }
-    
-    static FFmpegProgress parseProgress(String value) {
+
+    static FFmpegProgress parseProgress(final String value) {
         if (value == null) {
             return null;
         }
         
         try {
             // Replace "frame=  495 fps= 89" with "frame=495 fps=89"
-            value = value.replaceAll("= +", "=");
-            Map<String, String> map = parseKeyValues(value, "=");
+            String valueWithoutSpaces = value.replaceAll("= +", "=");
+            Map<String, String> map = parseKeyValues(valueWithoutSpaces, "=");
             
             Long frame = parseLong(map.get("frame"));
             Double fps = parseDouble(map.get("fps"));
@@ -128,16 +142,18 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
     }
     
     
-    static FFmpegResult parseResult(String value) {
+    static FFmpegResult parseResult(final String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
         
         try {
-            value = value.replaceAll("other streams", "other_streams").replaceAll("global headers", "global_headers").replaceAll("muxing overhead", "muxing_overhead").replaceAll(":\\s+", ":");
+            String valueWithoutSpaces = value.replaceAll("other streams", "other_streams")
+                    .replaceAll("global headers", "global_headers")
+                    .replaceAll("muxing overhead", "muxing_overhead")
+                    .replaceAll(":\\s+", ":");
             
-            Map<String, String> map = parseKeyValues(value, ":");
-            
+            Map<String, String> map = parseKeyValues(valueWithoutSpaces, ":");
             
             Long videoSize = parseSizeInBytes(map.get("video"));
             Long audioSize = parseSizeInBytes(map.get("audio"));
@@ -156,7 +172,7 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return null;
     }
     
-    private static Map<String, String> parseKeyValues(String value, String separator) {
+    private static Map<String, String> parseKeyValues(final String value, final String separator) {
         Map<String, String> result = new HashMap<>();
         
         for (String pair : value.split("\\s+")) {
@@ -172,7 +188,7 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return result;
     }
     
-    private static Long parseLong(String value) {
+    private static Long parseLong(final String value) {
         if (value != null && !value.isEmpty()) {
             try {
                 return Long.parseLong(value);
@@ -184,7 +200,7 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return null;
     }
     
-    private static Double parseDouble(String value) {
+    private static Double parseDouble(final String value) {
         if (value != null && !value.isEmpty()) {
             try {
                 return Double.parseDouble(value);
@@ -196,11 +212,11 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return null;
     }
     
-    private static Long parseSizeInBytes(String value) {
+    private static Long parseSizeInBytes(final String value) {
         return parseSize(value, SizeUnit.B);
     }
     
-    private static Long parseSize(String value, SizeUnit unit) {
+    private static Long parseSize(final String value, final SizeUnit unit) {
         String[] sizeAndUnit = splitValueAndUnit(value);
         Long parsedValue = parseLong(sizeAndUnit[0]);
         if (parsedValue == null) {
@@ -215,28 +231,29 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return valueUnit.convertTo(parsedValue, unit);
     }
     
-    private static Double parseBitrateInKBits(String value) {
+    private static Double parseBitrateInKBits(final String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
         
-        value = value.replace("kbits/s", "");
+        // TODO show warning if value ends not with kbits/s
+        String numericValue = value.replace("kbits/s", "");
         
-        return parseDouble(value);
+        return parseDouble(numericValue);
     }
     
-    private static Double parseRatio(String value) {
+    private static Double parseRatio(final String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        
+        String numericValue = value;
         double multiplier = 1;
         if (value.endsWith("%")) {
-            value = value.substring(0, value.length() - 1);
-            multiplier = 1. / 100;
+            numericValue = value.substring(0, value.length() - 1);
+            multiplier = PERCENTS_TO_RATIO_MULTIPLIER;
         }
         
-        Double valueDouble = parseDouble(value);
+        Double valueDouble = parseDouble(numericValue);
         if (valueDouble == null) {
             return null;
         }
@@ -244,13 +261,13 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return multiplier * valueDouble;
     }
     
-    private static Long parseTimeInMillis(String value) {
+    private static Long parseTimeInMillis(final String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        
+        final int expectedParts = 3;
         String[] timeParts = value.split(":");
-        if (timeParts.length != 3) {
+        if (timeParts.length != expectedParts) {
             return null;
         }
         
@@ -262,22 +279,24 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
             return null;
         }
         
-        return (long) (((hours * 60 + minutes) * 60 + seconds) * 1000);
+        return TimeUnit.HOURS.toMillis(hours)
+                + TimeUnit.MINUTES.toMillis(minutes)
+                + (long) (TimeUnit.SECONDS.toMillis(1) * seconds);
     }
     
-    private static Double parseSpeed(String value) {
+    private static Double parseSpeed(final String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        
+        String numericValue = value;
         if (value.endsWith("x")) {
-            value = value.substring(0, value.length() - 1);
+            numericValue = value.substring(0, value.length() - 1);
         }
         
-        return parseDouble(value);
+        return parseDouble(numericValue);
     }
     
-    private static String[] splitValueAndUnit(String string) {
+    private static String[] splitValueAndUnit(final String string) {
         if (string == null) {
             return new String[]{"", ""};
         }
@@ -291,7 +310,7 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return new String[]{string, ""};
     }
     
-    private static SizeUnit parseSizeUnit(String value) {
+    private static SizeUnit parseSizeUnit(final String value) {
         for (SizeUnit unit : SizeUnit.values()) {
             if (unit.name().equalsIgnoreCase(value)) {
                 return unit;
@@ -301,7 +320,7 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
         return null;
     }
     
-    private static boolean hasNonNull(Object... items) {
+    private static boolean hasNonNull(final Object... items) {
         for (Object item : items) {
             if (item != null) {
                 return true;

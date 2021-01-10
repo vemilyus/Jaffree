@@ -38,7 +38,7 @@ public class DefaultFormatParserTest {
     }
 
     public static Data parseResource(String name) throws Exception {
-        try (InputStream input = DefaultFormatParserTest.class.getResourceAsStream(name)){
+        try (InputStream input = DefaultFormatParserTest.class.getResourceAsStream(name)) {
             return readData(input, StreamingFormatParsers.createDefault());
         }
     }
