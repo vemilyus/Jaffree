@@ -27,11 +27,13 @@ This is a fork of the library by Denis Kokorin, with a progressive outlook that 
 
 # Usage 
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.v47.jaffree/jaffree.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.v47.jaffree%22%20AND%20a:%22jaffree%22)
+
 ```xml
 <dependency>
     <groupId>io.v47.jaffree</groupId>
     <artifactId>jaffree</artifactId>
-    <version>0.10.0</version>
+    <version>0.9.8</version>
 </dependency>
 
 <!--
