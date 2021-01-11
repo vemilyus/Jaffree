@@ -27,14 +27,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * {@link FFmpegResultReader} reads ffmpeg stderr output, parses {@link FFmpegProgress} and
+ * This class reads ffmpeg stderr output, parses {@link FFmpegProgress} and
  * {@link FFmpegResult} and passes unparsed output to {@link OutputListener} (if provided).
  */
 public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FFmpegProcessHandler.class);
     
     private static final double PERCENTS_TO_RATIO_MULTIPLIER = 0.01;
-    private static final Logger LOGGER = LoggerFactory.getLogger(FFmpegResultReader.class);
     
     private final ProgressListener progressListener;
     private final OutputListener outputListener;
@@ -43,7 +42,7 @@ public class FFmpegProcessHandler extends LinesProcessHandler<FFmpegResult> {
     private volatile String finalErrorMessage;
     
     /**
-     * Creates {@link FFmpegResultReader}.
+     * Creates {@link FFmpegProcessHandler}.
      *
      * @param progressListener progress listener
      * @param outputListener   output listener
