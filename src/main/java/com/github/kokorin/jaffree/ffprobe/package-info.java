@@ -15,14 +15,7 @@
  *
  */
 
-package com.github.kokorin.jaffree.process;
-
-public interface Stopper {
-    void graceStop();
-    void forceStop();
-    void setProcess(Process process);
-
-    interface Factory {
-        Stopper createStopper(Process process);
-    }
-}
+/**
+ * Classes used to integrate with ffprobe
+ */
+package com.github.kokorin.jaffree.ffprobe;

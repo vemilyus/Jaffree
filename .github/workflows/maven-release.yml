@@ -26,8 +26,9 @@ jobs:
               <servers>
                 <server>
                   <id>ossrh</id>
-                  <username>${{ secrets.SONATYPE_USER }}</username>
-                  <password>${{ secrets.SONATYPE_PASSWORD }}</password>
+                  <username>${{ secrets.OSSRH_USER }}</username>
+                  <password>${{ secrets.OSSRH_PASS }}</password>
+                  <passphrase>${{ secrets.OSSRH_SIGNING_PASSWORD }}</passphrase>
                 </server>
               </servers>
             </settings>
@@ -36,7 +37,7 @@ jobs:
       - name: Set up GPG keys
         run: |
           mkdir .gpg
-          echo '${{ secrets.GPG_PRIVATE_KEY }}' > .gpg/private_key.gpg
+          echo $(echo '${{ secrets.OSSRH_SIGNING_SECRET_KEY_RING_BASE64 }}' | base64 --decode) > .gpg/private_key.gpg
           gpg --import .gpg/private_key.gpg
           rm -rf .gpg
 

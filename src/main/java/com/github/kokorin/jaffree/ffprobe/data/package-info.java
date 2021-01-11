@@ -1,5 +1,5 @@
 /*
- *    Copyright  2019 Denis Kokorin
+ *    Copyright  2020 Denis Kokorin
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,12 +15,7 @@
  *
  */
 
+/**
+ * Package contains classes for data structures and parsers for ffprobe result.
+ */
 package com.github.kokorin.jaffree.ffprobe.data;
-
-import java.io.InputStream;
-
-public interface FormatParser {
-    String getFormatName();
-
-    Data parse(InputStream inputStream);
-}

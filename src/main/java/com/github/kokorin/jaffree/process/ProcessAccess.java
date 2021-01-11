@@ -1,5 +1,5 @@
 /*
- *    Copyright  2017 Denis Kokorin
+ *    Copyright  2020 Alex Katlein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 
 package com.github.kokorin.jaffree.process;
 
-import java.io.InputStream;
-
-public interface StdReader<T> {
-    T read(InputStream stdOut);
+public interface ProcessAccess {
+    void stopForcefully();
+    
+    void stopGracefully();
 }

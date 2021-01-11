@@ -2,13 +2,24 @@
 
 Jaffree stands for [Ja]va [ff]mpeg and [ff]probe [free] command line wrapper. Jaffree supports programmatic video production and consumption (with transparency)
 
-It integrates with ffmpeg via `java.lang.Process`.
+It integrates with ffmpeg via [NuProcess](https://github.com/brettwooldridge/NuProcess).
 
 Inspired by [ffmpeg-cli-wrapper](https://github.com/bramp/ffmpeg-cli-wrapper)
 
-## Tested with the help of [GitHub Actions](/kokorin/Jaffree/blob/master/.github/workflows/maven.yml) 
+This is a fork of the library by Denis Kokorin, with a progressive outlook that tries to maintain 
+99% API compatibility with the original.
 
-![Tests](https://github.com/kokorin/Jaffree/workflows/Tests/badge.svg)
+## Differences to Kokorin's library
+
+- Revamped process execution using different method of launching processes.
+- No more puller threads for process stdout and stderr (handled by __NuProcess__).
+- Using ForkJoinPool to run async tasks.
+- Clean async API using Java Future
+- Async FFprobe execution, not just FFmpeg
+
+## Tested with the help of [GitHub Actions](/v47-io/Jaffree/blob/master/.github/workflows/maven.yml) 
+
+![Tests](https://github.com/v47-io/Jaffree/workflows/Tests/badge.svg)
 
 **OS**: Ubuntu, MacOS, Windows
 
@@ -16,13 +27,11 @@ Inspired by [ffmpeg-cli-wrapper](https://github.com/bramp/ffmpeg-cli-wrapper)
 
 # Usage 
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.kokorin.jaffree/jaffree.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.kokorin.jaffree%22%20AND%20a:%22jaffree%22)
-
 ```xml
 <dependency>
-    <groupId>com.github.kokorin.jaffree</groupId>
+    <groupId>io.v47.jaffree</groupId>
     <artifactId>jaffree</artifactId>
-    <version>0.9.7</version>
+    <version>0.10.0</version>
 </dependency>
 
 <!--
@@ -224,47 +233,32 @@ See whole examples [here](/src/test/java/examples/ffmpeg/Stop.java).
 
 ### Grace stop
 
-Start ffmpeg with FFmpeg#executeAsync and stop it with FFmpegResultFuture#graceStop (ffmpeg only).
+Start ffmpeg with FFmpeg#executeAsync and stop it with Future#cancel.
 This will pass `q` symbol to ffmpeg's stdin.
 
 **Note** output media finalization may take some time - up to several seconds.
 
 ```java
-FFmpegResultFuture future = ffmpeg.executeAsync();
+ProcessFuture&lt;FFmpegResult&gt; future = ffmpeg.executeAsync();
 
 Thread.sleep(5_000);
-future.graceStop();
+future.cancel(false);
 ```
 
 
 ### Force stop
 
-There are 3 ways to stop ffmpeg forcefully.
+There are 2 ways to stop ffmpeg forcefully.
 
 **Note**: ffmpeg may not (depending on output format) correctly finalize output. 
 It's very likely that produced media will be corrupted with force stop.
 
-* Throw an exception in ProgressListener (ffmpeg only)
+* Start ffmpeg with FFmpeg#executeAsync (or ffprobe with FFprobe#executeAsync) and stop it with Future#cancel
 ```java
-final AtomicBoolean stopped = new AtomicBoolean();
-ffmpeg.setProgressListener(
-        new ProgressListener() {
-            @Override
-            public void onProgress(FFmpegProgress progress) {
-                if (stopped.get()) {
-                    throw new RuntimeException("Stooped with exception!");
-                }
-            }
-        }
-);
-```
-
-* Start ffmpeg with FFmpeg#executeAsync and stop it with FFmpegResultFuture#forceStop (ffmpeg only)
-```java
-FFmpegResultFuture future = ffmpeg.executeAsync();
+ProcessFuture&lt;FFmpegResult&gt; future = ffmpeg.executeAsync();
 
 Thread.sleep(5_000);
-future.forceStop();
+future.cancel(true);
 ```
 
 * Start ffmpeg with FFmpeg#execute (or ffprobe with FFprobe#execute) and interrupt thread
