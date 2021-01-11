@@ -4,14 +4,14 @@
                     http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.kokorin.jaffree</groupId>
+    <groupId>io.v47.jaffree</groupId>
     <artifactId>jaffree</artifactId>
-    <version>0.9.8</version>
+    <version>0.9.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Jaffree</name>
     <description>Java ffmpeg command-line wrapper.</description>
-    <url>https://github.com/kokorin/Jaffree</url>
+    <url>https://github.com/v47-io/Jaffree</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -20,15 +20,20 @@
     </licenses>
     <developers>
         <developer>
+            <name>Alex Katlein</name>
+            <email>dev@vemilyus.com</email>
+            <url>https://github.com/vemilyus</url>
+        </developer>
+        <developer>
             <name>Denis Kokorin</name>
             <email>kokorin86@gmail.com</email>
             <url>https://github.com/kokorin</url>
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/kokorin/Jaffree.git</connection>
-        <developerConnection>scm:git:ssh://github.com/kokorin/Jaffree.git</developerConnection>
-        <url>http://github.com/kokorin/Jaffree/tree/master</url>
+        <connection>scm:git:git://github.com/v47-io/Jaffree.git</connection>
+        <developerConnection>scm:git:ssh://github.com/v47-io/Jaffree.git</developerConnection>
+        <url>http://github.com/v47-io/Jaffree/tree/master</url>
     </scm>
 
     <distributionManagement>
@@ -93,7 +98,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -4,17 +4,16 @@
 
 publiccodeYmlVersion: '0.2'
 name: Jaffree
-url: 'https://github.com/kokorin/Jaffree'
-# TODO update
-releaseDate: '2020-06-28'
+url: 'https://github.com/v47-io/Jaffree'
+isBasedOn: 'https://github.com/kokorin/Jaffree'
+releaseDate: '2021-01-11'
 developmentStatus: stable
-softwareVersion: 0.9.8
+softwareVersion: 0.10.0
 platforms:
   - web
   - windows
   - mac
   - linux
-  - ios
   - android
 softwareType: library
 categories:
@@ -22,8 +21,8 @@ categories:
 maintenance:
   type: internal
   contacts:
-    - name: Denis Kokorin
-      email: kokorin86@gmail.com
+    - name: Alex Katlein
+      email: dev@vemilyus.com
 legal:
   license: Apache-2.0
 localisation:
