@@ -16,6 +16,7 @@ This is a fork of the library by Denis Kokorin, with a progressive outlook that 
 - Using ForkJoinPool to run async tasks.
 - Clean async API using Java Future
 - Async FFprobe execution, not just FFmpeg
+- __DROPPED__ Java 1.7 compatibility. Java 1.8 concurrency integrates better with other libraries
 
 ## Tested with the help of [GitHub Actions](/v47-io/Jaffree/blob/master/.github/workflows/maven.yml) 
 
@@ -23,7 +24,7 @@ This is a fork of the library by Denis Kokorin, with a progressive outlook that 
 
 **OS**: Ubuntu, MacOS, Windows
 
-**JDK**: 7, 8, 11, 14
+**JDK**: 8, 11, 14
 
 # Usage 
 
