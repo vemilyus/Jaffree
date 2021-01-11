@@ -17,10 +17,26 @@
 
 package com.github.kokorin.jaffree.ffprobe.data;
 
+/**
+ * Represents ffprobe output format parser.
+ */
 public interface StreamingFormatParser {
+    /**
+     * Returns format name which is passed to ffprobe via <b>-print_format</b> argument.
+     *
+     * @return format name
+     */
     String getFormatName();
     
+    /**
+     * Adds the specified to be parsed
+     */
     void pushLine(String line);
     
+    /**
+     * Returns the final result
+     *
+     * @return the parsed data
+     */
     Data getResult();
 }

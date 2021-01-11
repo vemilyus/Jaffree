@@ -95,7 +95,8 @@ class StreamingDefaultFormatParser implements StreamingFormatParser {
         State state = stack.pollLast();
         
         if (!state.sectionName.equals(name)) {
-            throw new RuntimeException("Expecting end of " + state.sectionName + " but found " + name);
+            throw new RuntimeException("Expecting end of "
+                    + state.sectionName + " but found " + name);
         }
         
         State parent = stack.getLast();
@@ -108,7 +109,8 @@ class StreamingDefaultFormatParser implements StreamingFormatParser {
     
     private void startProperty(String key) {
         if (multilinePropertyKey != null || multilinePropertyValue != null) {
-            throw new IllegalStateException("Property already started, but not ended: " + multilinePropertyKey);
+            throw new IllegalStateException("Property already started, but not ended: "
+                    + multilinePropertyKey);
         }
         
         multilinePropertyKey = key;
@@ -122,8 +124,8 @@ class StreamingDefaultFormatParser implements StreamingFormatParser {
         
         multilinePropertyValue.append(line);
     }
-    
-    private void endProperty() {
+
+    public void endProperty() {
         property(multilinePropertyKey, multilinePropertyValue.toString());
         
         multilinePropertyKey = null;
