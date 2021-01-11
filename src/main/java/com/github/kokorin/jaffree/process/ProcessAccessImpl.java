@@ -23,28 +23,37 @@ import org.slf4j.LoggerFactory;
 
 class ProcessAccessImpl implements ProcessAccess {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessAccessImpl.class);
-    
+
     private volatile NuProcess process;
-    
+
     public synchronized void setProcess(NuProcess process) {
         this.process = process;
     }
-    
+
+    @Override
+    public int getPID() {
+        if (process != null) {
+            return process.getPID();
+        } else {
+            throw new IllegalStateException("No Process set yet, can't retrieve process ID");
+        }
+    }
+
     @Override
     public synchronized void stopForcefully() {
         NuProcess process = this.process;
-        
+
         if (process == null) {
             LOGGER.error("No Process set yet, can't stop");
         } else if (process.isRunning()) {
             process.destroy(true);
         }
     }
-    
+
     @Override
     public synchronized void stopGracefully() {
         NuProcess process = this.process;
-        
+
         if (process == null) {
             LOGGER.error("No Process set yet, can't stop");
         } else if (process.isRunning()) {

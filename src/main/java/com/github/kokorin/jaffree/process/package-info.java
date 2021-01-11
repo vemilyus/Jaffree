@@ -16,6 +16,6 @@
  */
 
 /**
- * Claases used to integrate with {@link java.lang.Process}
+ * Claases used to interact with {@link com.zaxxer.nuprocess.NuProcess}
  */
 package com.github.kokorin.jaffree.process;
