@@ -1,4 +1,3 @@
-
 name: Release
 
 on:
@@ -8,7 +7,6 @@ on:
 
 jobs:
   release:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,29 +15,15 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 7
+          java-version: 11
 
-      - name: Set up Maven settings.xml to access Sonatype Nexus
-        run: |
-          echo '
-            <settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-              <servers>
-                <server>
-                  <id>ossrh</id>
-                  <username>${{ secrets.OSSRH_USER }}</username>
-                  <password>${{ secrets.OSSRH_PASS }}</password>
-                  <passphrase>${{ secrets.OSSRH_SIGNING_PASSWORD }}</passphrase>
-                </server>
-              </servers>
-            </settings>
-          ' > ~/.m2/settings.xml
-
-      - name: Set up GPG keys
-        run: |
-          mkdir .gpg
-          echo $(echo '${{ secrets.OSSRH_SIGNING_SECRET_KEY_RING_BASE64 }}' | base64 --decode) > .gpg/private_key.gpg
-          gpg --import .gpg/private_key.gpg
-          rm -rf .gpg
-
-      - name: Release
-        run: bash mvnw -B clean deploy -DskipTests -Prelease
+      - name: Release Maven package
+        uses: samuelmeuli/action-maven-publish@v1
+        with:
+          maven_args: -DskipTests
+          maven_profiles: release
+          server_id: ossrh
+          gpg_private_key: ${{ secrets.OSSRH_PRIVATE_KEY }}
+          gpg_passphrase: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+          nexus_username: ${{ secrets.OSSRH_USER }}
+          nexus_password: ${{ secrets.OSSRH_PASS }}
