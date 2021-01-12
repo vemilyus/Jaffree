@@ -18,7 +18,9 @@
 package com.github.kokorin.jaffree.process;
 
 public interface ProcessAccess {
+    int getPID();
+
     void stopForcefully();
-    
+
     void stopGracefully();
 }

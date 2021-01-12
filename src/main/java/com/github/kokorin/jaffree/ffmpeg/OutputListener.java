@@ -22,7 +22,7 @@ package com.github.kokorin.jaffree.ffmpeg;
  */
 public interface OutputListener {
     /**
-     * Invoked on every line, which wasn't parsed by FFmpegResultReader.
+     * Invoked on every line, which wasn't parsed by FFmpegProcessHandler.
      * <p>
      * Attention: this method is not thread safe and may be invoked in different thread.
      * Consider using synchronization.

@@ -30,10 +30,9 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
- * {@link FFmpeg} provides an ability to start & stop ffmpeg process and keep track of
+ * This class provides an ability to start an ffmpeg process and keep track of
  * encoding progress.
  */
-//TODO add debug statements for all methods
 public class FFmpeg {
     private final List<Input> inputs = new ArrayList<>();
     private final List<Output> outputs = new ArrayList<>();
@@ -275,7 +274,7 @@ public class FFmpeg {
      *
      * @param outputListener output listener
      * @return this
-     * @see FFmpegResultReader
+     * @see FFmpegProcessHandler
      */
     public FFmpeg setOutputListener(final OutputListener outputListener) {
         this.outputListener = outputListener;

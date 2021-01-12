@@ -17,8 +17,9 @@
 
 package com.github.kokorin.jaffree.process;
 
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Future;
 
-public interface ProcessFuture<V> extends Future<V> {
+public interface ProcessFuture<V> extends Future<V>, CompletionStage<V> {
     ProcessAccess getProcessAccess();
 }
