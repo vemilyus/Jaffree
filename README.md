@@ -34,7 +34,7 @@ This is a fork of the library by Denis Kokorin, with a progressive outlook that 
 <dependency>
     <groupId>io.v47.jaffree</groupId>
     <artifactId>jaffree</artifactId>
-    <version>0.9.8</version>
+    <version>0.10.0</version>
 </dependency>
 
 <!--
